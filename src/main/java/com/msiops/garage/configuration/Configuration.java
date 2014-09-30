@@ -107,6 +107,13 @@ public interface Configuration {
 
     }
 
+    static Properties overrideFromSyspropsAndEnv(final Properties properties,
+            final Map<String, String> with) {
+
+        return overrideFromEnv(override(properties, with.values()), with);
+
+    }
+
     static Properties overrideFromVars(final Properties properties,
             final Map<String, String> with, final Map<String, String> from) {
 
