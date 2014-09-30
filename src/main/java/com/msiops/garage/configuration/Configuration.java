@@ -24,6 +24,18 @@ public interface Configuration {
 
     static final String ENVIRONMENT_PROPERTY = "garage.environment";
 
+    static Properties detach(final Properties props) {
+
+        final Properties rval = new Properties();
+
+        props.stringPropertyNames().forEach(k -> {
+            rval.setProperty(k, props.getProperty(k));
+        });
+
+        return rval;
+
+    }
+
     static Properties of(final Class<?> key) {
 
         return of(key, new Properties());

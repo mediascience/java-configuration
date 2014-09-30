@@ -77,6 +77,25 @@ public final class ConfigurationTest {
     }
 
     @Test
+    public void testDetach() {
+
+        final Properties base = new Properties();
+        base.setProperty("a", "av");
+
+        final Properties mid = new Properties(base);
+        mid.setProperty("b", "bv");
+
+        final Properties top = Configuration.detach(mid);
+
+        base.setProperty("a", "newav");
+        mid.setProperty("b", "newbv");
+
+        assertEquals("av", top.getProperty("a"));
+        assertEquals("bv", top.getProperty("b"));
+
+    }
+
+    @Test
     public void testExplicitEnvironment() {
 
         final Properties expected = load("production");
