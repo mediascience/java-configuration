@@ -45,6 +45,11 @@ public interface Configuration {
 
     }
 
+    static String currentEnvironment() {
+        return System.getProperty(ENVIRONMENT_PROPERTY,
+                Helper.DEFAULT_ENVIRONMENT);
+    }
+
     static Properties detach(final Properties props) {
 
         final Properties rval = new Properties();
@@ -66,7 +71,7 @@ public interface Configuration {
     static Properties of(final Class<?> key, final Properties defaults) {
 
         final String env = System.getProperty(ENVIRONMENT_PROPERTY,
-                "development");
+                Helper.DEFAULT_ENVIRONMENT);
 
         try (InputStream is = key.getResourceAsStream(env + ".properties")) {
 

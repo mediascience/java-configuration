@@ -133,6 +133,22 @@ public final class ConfigurationTest {
     }
 
     @Test
+    public void testGetEnvironmentNameDefault() {
+
+        assertEquals("development", Configuration.currentEnvironment());
+
+    }
+
+    @Test
+    public void testGetEnvironmentNameExplicit() {
+
+        System.setProperty(Configuration.ENVIRONMENT_PROPERTY, "production");
+
+        assertEquals("production", Configuration.currentEnvironment());
+
+    }
+
+    @Test
     public void testOverride() {
 
         final String prop = "com.msiops.prop";
