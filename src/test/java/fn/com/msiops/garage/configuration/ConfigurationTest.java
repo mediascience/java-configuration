@@ -166,6 +166,58 @@ public final class ConfigurationTest {
     }
 
     @Test
+    public void testOverrideFromArbitgraryDoesNotModifyOriginal() {
+
+        final String prop = "com.msiops.prop";
+
+        final Properties props = new Properties();
+        props.setProperty(prop, "value");
+
+        final Properties overrides = new Properties();
+        overrides.setProperty(prop, "overridden");
+
+        Configuration.override(props, Collections.singleton(prop), overrides);
+
+        assertEquals("value", props.getProperty(prop));
+
+    }
+
+    @Test
+    public void testOverrideFromAribrary() {
+
+        final String prop = "com.msiops.prop";
+
+        final Properties overrides = new Properties();
+        overrides.setProperty(prop, "overridden");
+
+        final Properties props = new Properties();
+        props.setProperty(prop, "value");
+
+        final Properties actual = Configuration.override(props,
+                Collections.singleton(prop), overrides);
+
+        assertEquals("overridden", actual.getProperty(prop));
+
+    }
+
+    @Test
+    public void testOverrideNotInArbitraryProps() {
+
+        final String prop = "com.msiops.prop";
+
+        final Properties props = new Properties();
+        props.setProperty(prop, "value");
+
+        final Properties overrides = new Properties();
+
+        final Properties actual = Configuration.override(props,
+                Collections.singleton(prop), overrides);
+
+        assertEquals("value", actual.getProperty(prop));
+
+    }
+
+    @Test
     public void testOverrideNotInSystemProps() {
 
         final String prop = "com.msiops.prop";

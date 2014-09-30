@@ -81,11 +81,17 @@ public interface Configuration {
     }
 
     static Properties override(final Properties properties,
-            final Collection<String> from) {
+            final Collection<String> with) {
 
+        return override(properties, with, System.getProperties());
+
+    }
+
+    static Properties override(final Properties properties,
+            final Collection<String> with, final Properties from) {
         final Properties rval = new Properties(properties);
-        from.forEach(k -> {
-            final String ovr = System.getProperty(k);
+        with.forEach(k -> {
+            final String ovr = from.getProperty(k);
             if (ovr != null) {
                 rval.setProperty(k, ovr);
             }
