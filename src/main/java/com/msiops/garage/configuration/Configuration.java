@@ -16,7 +16,6 @@
  */
 package com.msiops.garage.configuration;
 
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,7 +26,7 @@ import java.util.regex.Pattern;
 
 public interface Configuration {
 
-    static final String ENVIRONMENT_PROPERTY = "garage.environment";
+    public static final String ENVIRONMENT_PROPERTY = Helper.ENVIRONMENT_PROPERTY;
 
     static Map<String, String> asMap(final Properties from, final String prefix) {
 
@@ -46,8 +45,7 @@ public interface Configuration {
     }
 
     static String currentEnvironment() {
-        return System.getProperty(ENVIRONMENT_PROPERTY,
-                Helper.DEFAULT_ENVIRONMENT);
+        return Helper.environment();
     }
 
     static Properties detach(final Properties props) {
@@ -64,24 +62,26 @@ public interface Configuration {
 
     static Properties of(final Class<?> key) {
 
-        return of(key, new Properties());
+        return Helper.load(key, Helper.environment(), new Properties());
 
     }
 
     static Properties of(final Class<?> key, final Properties defaults) {
 
-        final String env = System.getProperty(ENVIRONMENT_PROPERTY,
-                Helper.DEFAULT_ENVIRONMENT);
+        return Helper.load(key, Helper.environment(), defaults);
 
-        try (InputStream is = key.getResourceAsStream(env + ".properties")) {
+    }
 
-            final Properties rval = new Properties(defaults);
-            rval.load(is);
-            return rval;
+    static Properties of(final Class<?> key, final String environment) {
 
-        } catch (final Exception e) {
-            return new Properties(defaults);
-        }
+        return Helper.load(key, environment, new Properties());
+
+    }
+
+    static Properties of(final Class<?> key, final String environment,
+            final Properties defaults) {
+
+        return Helper.load(key, environment, defaults);
 
     }
 
