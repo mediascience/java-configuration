@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -66,6 +67,30 @@ public final class ConfigurationTest {
     }
 
     @Test
+    public void testAsMap() {
+
+        final String base = "some.map";
+
+        final HashMap<String, String> expected = new HashMap<>();
+        final Properties defs = new Properties();
+        final Properties config = new Properties(defs);
+
+        defs.setProperty(base + "." + "xyz", "something");
+        expected.put("xyz", "something");
+
+        Arrays.asList("abc", "def", "ghi").forEach(s -> {
+            final String v = s + "0" + s;
+            config.setProperty(base + "." + s, v);
+            expected.put(s, v);
+        });
+
+        final Map<String, String> actual = Configuration.asMap(config, base);
+
+        assertEquals(expected, actual);
+
+    }
+
+    @Test
     public void testDefaultEnvironment() {
 
         final Properties expected = load("development");
@@ -73,6 +98,25 @@ public final class ConfigurationTest {
         final Properties actual = Configuration.of(ConfigurationTest.class);
 
         assertPropertiesEquals(expected, actual);
+
+    }
+
+    @Test
+    public void testDetach() {
+
+        final Properties bottom = new Properties();
+        bottom.setProperty("a", "av");
+
+        final Properties mid = new Properties(bottom);
+        mid.setProperty("b", "bv");
+
+        final Properties top = Configuration.detach(mid);
+
+        bottom.setProperty("a", "newav");
+        mid.setProperty("b", "newbv");
+
+        assertEquals("av", top.getProperty("a"));
+        assertEquals("bv", top.getProperty("b"));
 
     }
 

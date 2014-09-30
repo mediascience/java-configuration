@@ -33,6 +33,28 @@ final Collection<String> overrides = Arrays.asList("sys.prop", "sys.other.prop")
 Properties overridden = Collections.override(props, overrides);
 ```
 
+### Detach
+```java
+Properties p = new Properties();
+p.setProperty("key","value");
+
+Properties detached = Configuration.detach(p);
+p.setProperty("key","changed");
+assert detached.getProperty("key").equals("value");
+```
+
+### Partial Properties Map
+```java
+Properties p = new Properties();
+p.setProperty("base.a", "avalue");
+p.setProperty("base.b", "bvalue");
+
+Map<String,String> partial = Configuration.asMap(p, "base");
+assert partial.get("a").equals("avalue");
+assert partial.get("b").equals("bvalue");
+```
+
+
 ## Versioning
 
 Releases in the 0.x series are the Wild West. Anything can change between

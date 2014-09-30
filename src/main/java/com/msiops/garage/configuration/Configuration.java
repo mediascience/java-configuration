@@ -18,11 +18,44 @@ package com.msiops.garage.configuration;
 
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public interface Configuration {
 
     static final String ENVIRONMENT_PROPERTY = "garage.environment";
+
+    static Map<String, String> asMap(final Properties from, final String prefix) {
+
+        final Pattern scanner = Pattern.compile(Pattern.quote(prefix + ".")
+                + "(.+)");
+
+        final HashMap<String, String> accum = new HashMap<>();
+        from.stringPropertyNames().forEach(k -> {
+            final Matcher m = scanner.matcher(k);
+            if (m.matches()) {
+                accum.put(m.group(1), from.getProperty(k));
+            }
+        });
+        return Collections.unmodifiableMap(accum);
+
+    }
+
+    static Properties detach(final Properties props) {
+
+        final Properties rval = new Properties();
+
+        props.stringPropertyNames().forEach(k -> {
+            rval.setProperty(k, props.getProperty(k));
+        });
+
+        return rval;
+
+    }
 
     static Properties of(final Class<?> key) {
 
