@@ -3,13 +3,13 @@ java-configuration
 
 Simple environment-based configuration for Java.
 
-# Usage
+## Usage
 
-## Import to Project
+### Import to Project
 
 (not yet in maven central)
 
-## Load Properties
+### Load Properties
 ```java
 // environment name is in sysprop "garage.environment"
 // default environment is "development"
@@ -22,7 +22,7 @@ final Properties props = Configuration.of(MyClass.class);
 final Properties props = Configuration.of(MyClass.class, defProps);
 ```
 
-## Override Properties
+### Override Properties
 ```java
 final Properties props = ...
 final Collection<String> overrides = Arrays.asList("sys.prop", "sys.other.prop");
