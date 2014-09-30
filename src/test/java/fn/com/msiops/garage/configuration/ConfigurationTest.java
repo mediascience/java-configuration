@@ -307,6 +307,38 @@ public final class ConfigurationTest {
     }
 
     @Test
+    public void testOverrideFromSystemPropsAndEnvironmentDoesNotModifyOrig() {
+
+        final String prop1 = "com.msiops.prop1";
+        final String prop2 = "com.msiops.prop2";
+        final String var1 = System.getenv().keySet().iterator().next();
+        final String var2 = "ARBTRARY_NOT_MATCHED_VAR_NAME";
+
+        final String origv1 = "value-should-not-be-in-environment-or-sysprops1";
+        final String origv2 = "value-should-not-be-in-environment-or-sysprops2";
+
+        final String ovr1 = System.getenv(var1);
+        final String ovr2 = "override-2";
+
+        System.setProperty(prop1, "something that will never be seen");
+        System.setProperty(prop2, ovr2);
+
+        final Properties props = new Properties();
+        props.setProperty(prop1, origv1);
+        props.setProperty(prop2, origv2);
+
+        final Map<String, String> spec = new HashMap<>();
+        spec.put(var1, prop1);
+        spec.put(var2, prop2);
+
+        Configuration.overrideFromSyspropsAndEnv(props, spec);
+
+        assertEquals(origv1, props.getProperty(prop1));
+        assertEquals(origv2, props.getProperty(prop2));
+
+    }
+
+    @Test
     public void testOverrideFromVariablesMap() {
 
         final String prop = "com.msiops.prop";
