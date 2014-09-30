@@ -8,8 +8,15 @@ Simple environment-based configuration for Java.
 ## Usage
 
 ### Import to Project
+```xml
+<dependency>
+    <groupId>com.msiops.garage</groupId>
+    <artifactId>garage-configuration</artifactId>
+    <version>${v.configuration}</version>
+</dependency>
+```
 
-(not yet in maven central)
+See [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%20%22com.msiops.garage%22%20a%3A%22garage-configuration%22) for latest version
 
 ### Load Properties
 ```java
