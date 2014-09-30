@@ -73,6 +73,56 @@ public final class ConfigurationTest {
     }
 
     @Test
+    public void testOverride() {
+
+        final String prop = "com.msiops.prop";
+
+        final Properties props = new Properties();
+        props.setProperty(prop, "value");
+
+        System.setProperty(prop, "overridden");
+
+        final Properties actual = Configuration.override(props,
+                Collections.singleton(prop));
+
+        assertEquals("overridden", actual.getProperty(prop));
+
+    }
+
+    @Test
+    public void testOverrideDoesNotModifyOriginal() {
+
+        final String prop = "com.msiops.prop";
+
+        final Properties props = new Properties();
+        props.setProperty(prop, "value");
+
+        System.setProperty(prop, "overridden");
+
+        Configuration.override(props, Collections.singleton(prop));
+
+        assertEquals("value", props.getProperty(prop));
+
+    }
+
+    @Test
+    public void testOverrideNotInSystemProps() {
+
+        final String prop = "com.msiops.prop";
+
+        final Properties props = new Properties();
+        props.setProperty(prop, "value");
+
+        System.clearProperty(prop);
+
+        final Properties actual = Configuration.override(props,
+                Collections.singleton(prop));
+
+        assertEquals("value", actual.getProperty(prop));
+
+    }
+
+    @Test
     public void testUnconfiguredEnvironment() {
 
         System.setProperty(Configuration.ENVIRONMENT_PROPERTY, "nonexistent");

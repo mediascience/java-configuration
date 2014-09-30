@@ -1,6 +1,7 @@
 package com.msiops.garage.configuration;
 
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Properties;
 
 public interface Configuration {
@@ -27,6 +28,20 @@ public interface Configuration {
         } catch (final Exception e) {
             return new Properties(defaults);
         }
+
+    }
+
+    static Properties override(final Properties properties,
+            final Collection<String> from) {
+
+        final Properties rval = new Properties(properties);
+        from.forEach(k -> {
+            final String ovr = System.getProperty(k);
+            if (ovr != null) {
+                rval.setProperty(k, ovr);
+            }
+        });
+        return rval;
 
     }
 
