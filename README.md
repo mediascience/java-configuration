@@ -1,6 +1,8 @@
 java-configuration
 ==================
 
+[![Build Status](https://travis-ci.org/mediascience/java-configuration.svg)](https://travis-ci.org/mediascience/java-configuration)
+
 Simple environment-based configuration for Java.
 
 ## Usage
