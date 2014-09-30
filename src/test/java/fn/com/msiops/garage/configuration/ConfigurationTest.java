@@ -317,7 +317,6 @@ public final class ConfigurationTest {
         final String origv1 = "value-should-not-be-in-environment-or-sysprops1";
         final String origv2 = "value-should-not-be-in-environment-or-sysprops2";
 
-        final String ovr1 = System.getenv(var1);
         final String ovr2 = "override-2";
 
         System.setProperty(prop1, "something that will never be seen");
