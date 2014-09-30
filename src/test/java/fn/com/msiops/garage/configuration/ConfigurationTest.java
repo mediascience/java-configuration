@@ -4,6 +4,9 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.junit.Before;
@@ -12,6 +15,23 @@ import org.junit.Test;
 import com.msiops.garage.configuration.Configuration;
 
 public final class ConfigurationTest {
+
+    private static final void assertPropertiesEquals(final Properties p1,
+            final Properties p2) {
+
+        assertEquals(flatten(p1), flatten(p2));
+
+    }
+
+    private static Map<String, String> flatten(final Properties props) {
+
+        final HashMap<String, String> flattened = new HashMap<>();
+        props.stringPropertyNames().forEach(k -> {
+            flattened.put(k, props.getProperty(k));
+        });
+        return Collections.unmodifiableMap(flattened);
+
+    }
 
     private static Properties load(final String env) {
         try (InputStream is = ConfigurationTest.class.getResourceAsStream(env
@@ -36,7 +56,7 @@ public final class ConfigurationTest {
 
         final Properties actual = Configuration.of(ConfigurationTest.class);
 
-        assertEquals(expected, actual);
+        assertPropertiesEquals(expected, actual);
 
     }
 
@@ -48,7 +68,31 @@ public final class ConfigurationTest {
         System.setProperty(Configuration.ENVIRONMENT_PROPERTY, "production");
         final Properties actual = Configuration.of(ConfigurationTest.class);
 
-        assertEquals(expected, actual);
+        assertPropertiesEquals(expected, actual);
+
+    }
+
+    @Test
+    public void testUnconfiguredEnvironment() {
+
+        System.setProperty(Configuration.ENVIRONMENT_PROPERTY, "nonexistent");
+        final Properties actual = Configuration.of(ConfigurationTest.class);
+
+        assertTrue(flatten(actual).isEmpty());
+
+    }
+
+    @Test
+    public void testUnconfiguredEnvironmentWithDefaults() {
+
+        final Properties defs = new Properties();
+        defs.setProperty("not.from.loaded", "default value");
+
+        System.setProperty(Configuration.ENVIRONMENT_PROPERTY, "nonexistent");
+        final Properties actual = Configuration.of(ConfigurationTest.class,
+                defs);
+
+        assertPropertiesEquals(defs, actual);
 
     }
 
@@ -69,7 +113,7 @@ public final class ConfigurationTest {
         final Properties actual = Configuration.of(ConfigurationTest.class,
                 defs);
 
-        assertEquals(expected, actual);
+        assertPropertiesEquals(expected, actual);
 
     }
 

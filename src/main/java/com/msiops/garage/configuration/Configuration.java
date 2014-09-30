@@ -1,6 +1,5 @@
 package com.msiops.garage.configuration;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -25,7 +24,7 @@ public interface Configuration {
             rval.load(is);
             return rval;
 
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             return new Properties(defaults);
         }
 
