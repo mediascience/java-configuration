@@ -52,4 +52,25 @@ public final class ConfigurationTest {
 
     }
 
+    @Test
+    public void testWithDefaults() {
+
+        final Properties loaded = load("production");
+        final String firstKey = (String) loaded.keys().nextElement();
+
+        final Properties defs = new Properties();
+        defs.setProperty(firstKey, "default value");
+        defs.setProperty("not.from.loaded", "anoter default value");
+
+        final Properties expected = new Properties(defs);
+        expected.putAll(loaded);
+
+        System.setProperty(Configuration.ENVIRONMENT_PROPERTY, "production");
+        final Properties actual = Configuration.of(ConfigurationTest.class,
+                defs);
+
+        assertEquals(expected, actual);
+
+    }
+
 }
