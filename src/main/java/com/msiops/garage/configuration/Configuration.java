@@ -100,4 +100,26 @@ public interface Configuration {
 
     }
 
+    static Properties overrideFromEnv(final Properties properties,
+            final Map<String, String> with) {
+
+        return overrideFromVars(properties, with, System.getenv());
+
+    }
+
+    static Properties overrideFromVars(final Properties properties,
+            final Map<String, String> with, final Map<String, String> from) {
+
+        final Properties rval = new Properties(properties);
+
+        with.entrySet().forEach(e -> {
+            if (from.containsKey(e.getKey())) {
+                rval.setProperty(e.getValue(), from.get(e.getKey()));
+            }
+        });
+
+        return rval;
+
+    }
+
 }

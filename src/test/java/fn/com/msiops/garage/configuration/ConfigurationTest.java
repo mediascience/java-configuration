@@ -201,6 +201,166 @@ public final class ConfigurationTest {
     }
 
     @Test
+    public void testOverrideFromEnvironment() {
+        final String prop = "com.msiops.prop";
+        final String var = System.getenv().keySet().iterator().next();
+
+        final String origv = "value";
+        final String ovr = System.getenv(var);
+        if (ovr == null) {
+            throw new AssertionError("invalid test, value of '" + var
+                    + "' is null in environment");
+        }
+
+        if (ovr.equals(origv)) {
+            throw new AssertionError("invalid test, value of '" + var
+                    + "' in environment is same as chosen original value");
+        }
+
+        final Properties props = new Properties();
+        props.setProperty(prop, origv);
+
+        final Map<String, String> spec = Collections.singletonMap(var, prop);
+
+        final Properties actual = Configuration.overrideFromEnv(props, spec);
+
+        assertEquals(ovr, actual.getProperty(prop));
+
+    }
+
+    @Test
+    public void testOverrideFromEnvironmentDoesNotModifyOriginal() {
+        final String prop = "com.msiops.prop";
+        final String var = System.getenv().keySet().iterator().next();
+
+        final String origv = "value";
+        final String ovr = System.getenv(var);
+        if (ovr == null) {
+            throw new AssertionError("invalid test, value of '" + var
+                    + "' is null in environment");
+        }
+
+        if (ovr.equals(origv)) {
+            throw new AssertionError("invalid test, value of '" + var
+                    + "' in environment is same as chosen original value");
+        }
+
+        final Properties props = new Properties();
+        props.setProperty(prop, origv);
+
+        final Map<String, String> spec = Collections.singletonMap(var, prop);
+
+        Configuration.overrideFromEnv(props, spec);
+
+        assertEquals(origv, props.getProperty(prop));
+
+    }
+
+    @Test
+    public void testOverrideFromEnvironmentNotInSpec() {
+        final String prop = "com.msiops.prop";
+        final String var = System.getenv().keySet().iterator().next();
+
+        final String origv = "value";
+        final String ovr = System.getenv(var);
+        if (ovr == null) {
+            throw new AssertionError("invalid test, value of '" + var
+                    + "' is null in environment");
+        }
+
+        if (ovr.equals(origv)) {
+            throw new AssertionError("invalid test, value of '" + var
+                    + "' in environment is same as chosen original value");
+        }
+
+        final Properties props = new Properties();
+        props.setProperty(prop, origv);
+
+        final Map<String, String> spec = Collections.emptyMap();
+
+        final Properties actual = Configuration.overrideFromEnv(props, spec);
+
+        assertEquals(origv, actual.getProperty(prop));
+
+    }
+
+    @Test
+    public void testOverrideFromVariablesMap() {
+
+        final String prop = "com.msiops.prop";
+        final String var = "PROP";
+
+        final Properties props = new Properties();
+        props.setProperty(prop, "value");
+
+        final Map<String, String> spec = Collections.singletonMap(var, prop);
+        final Map<String, String> values = Collections.singletonMap(var,
+                "overridden");
+
+        final Properties actual = Configuration.overrideFromVars(props, spec,
+                values);
+
+        assertEquals("overridden", actual.getProperty(prop));
+
+    }
+
+    @Test
+    public void testOverrideFromVariablesMapDoesNotModifyOriginal() {
+
+        final String prop = "com.msiops.prop";
+        final String var = "PROP";
+
+        final Properties props = new Properties();
+        props.setProperty(prop, "value");
+
+        final Map<String, String> spec = Collections.singletonMap(var, prop);
+        final Map<String, String> values = Collections.singletonMap(var,
+                "overridden");
+
+        Configuration.overrideFromVars(props, spec, values);
+
+        assertEquals("value", props.getProperty(prop));
+
+    }
+
+    @Test
+    public void testOverrideFromVariablesMapNotInSpec() {
+
+        final String prop = "com.msiops.prop";
+        final String var = "PROP";
+
+        final Properties props = new Properties();
+        props.setProperty(prop, "value");
+
+        final Map<String, String> spec = Collections.emptyMap();
+        final Map<String, String> values = Collections.singletonMap(var,
+                "overridden");
+
+        final Properties actual = Configuration.overrideFromVars(props, spec,
+                values);
+
+        assertEquals("value", actual.getProperty(prop));
+    }
+
+    @Test
+    public void testOverrideFromVariablesMapNotInVars() {
+
+        final String prop = "com.msiops.prop";
+        final String var = "PROP";
+
+        final Properties props = new Properties();
+        props.setProperty(prop, "value");
+
+        final Map<String, String> spec = Collections.singletonMap(var, prop);
+        final Map<String, String> values = Collections.emptyMap();
+
+        final Properties actual = Configuration.overrideFromVars(props, spec,
+                values);
+
+        assertEquals("value", actual.getProperty(prop));
+    }
+
+    @Test
     public void testOverrideNotInArbitraryProps() {
 
         final String prop = "com.msiops.prop";
