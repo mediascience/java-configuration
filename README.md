@@ -8,8 +8,15 @@ Simple environment-based configuration for Java.
 ## Usage
 
 ### Import to Project
+```xml
+<dependency>
+    <groupId>com.msiops.garage</groupId>
+    <artifactId>garage-configuration</artifactId>
+    <version>${v.configuration}</version>
+</dependency>
+```
 
-(not yet in maven central)
+See [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%20%22com.msiops.garage%22%20a%3A%22garage-configuration%22) for latest version
 
 ### Load Properties
 ```java
@@ -30,7 +37,17 @@ final Properties props = ...
 final Collection<String> overrides = Arrays.asList("sys.prop", "sys.other.prop");
 
 // any matching system properties override
-Properties overridden = Collections.override(props, overrides);
+final Properties overridden = Collections.override(props, overrides);
+
+
+final Properties addl = ...
+// any matching properties from source override
+final Properties overridden2 = Collections.override(props, overrides, addl);
+
+
+final Map<String,String> spec = Collections.singletonMap("USER", "my.app.user");
+// env USER value is added to props as "my.app.user"
+final Properties overridden2 = Collections.overrideFromEnv(props, spec);
 ```
 
 ### Detach

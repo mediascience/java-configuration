@@ -81,15 +81,50 @@ public interface Configuration {
     }
 
     static Properties override(final Properties properties,
-            final Collection<String> from) {
+            final Collection<String> with) {
 
+        return override(properties, with, System.getProperties());
+
+    }
+
+    static Properties override(final Properties properties,
+            final Collection<String> with, final Properties from) {
         final Properties rval = new Properties(properties);
-        from.forEach(k -> {
-            final String ovr = System.getProperty(k);
+        with.forEach(k -> {
+            final String ovr = from.getProperty(k);
             if (ovr != null) {
                 rval.setProperty(k, ovr);
             }
         });
+        return rval;
+
+    }
+
+    static Properties overrideFromEnv(final Properties properties,
+            final Map<String, String> with) {
+
+        return overrideFromVars(properties, with, System.getenv());
+
+    }
+
+    static Properties overrideFromSyspropsAndEnv(final Properties properties,
+            final Map<String, String> with) {
+
+        return overrideFromEnv(override(properties, with.values()), with);
+
+    }
+
+    static Properties overrideFromVars(final Properties properties,
+            final Map<String, String> with, final Map<String, String> from) {
+
+        final Properties rval = new Properties(properties);
+
+        with.entrySet().forEach(e -> {
+            if (from.containsKey(e.getKey())) {
+                rval.setProperty(e.getValue(), from.get(e.getKey()));
+            }
+        });
+
         return rval;
 
     }
