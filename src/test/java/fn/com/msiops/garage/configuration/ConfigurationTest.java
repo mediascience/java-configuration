@@ -33,10 +33,10 @@ import com.msiops.garage.configuration.Configuration;
 
 public final class ConfigurationTest {
 
-    private static final void assertPropertiesEquals(final Properties p1,
-            final Properties p2) {
+    private static final void assertPropertiesEquals(final Properties expected,
+            final Properties actual) {
 
-        assertEquals(flatten(p1), flatten(p2));
+        assertEquals(flatten(expected), flatten(actual));
 
     }
 
@@ -127,6 +127,54 @@ public final class ConfigurationTest {
 
         System.setProperty(Configuration.ENVIRONMENT_PROPERTY, "production");
         final Properties actual = Configuration.of(ConfigurationTest.class);
+
+        assertPropertiesEquals(expected, actual);
+
+    }
+
+    @Test
+    public void testGetEnvironmentNameDefault() {
+
+        assertEquals("development", Configuration.currentEnvironment());
+
+    }
+
+    @Test
+    public void testGetEnvironmentNameExplicit() {
+
+        System.setProperty(Configuration.ENVIRONMENT_PROPERTY, "production");
+
+        assertEquals("production", Configuration.currentEnvironment());
+
+    }
+
+    @Test
+    public void testLoadExplicitEnvironment() {
+
+        final Properties expected = load("production");
+
+        final Properties actual = Configuration.of(ConfigurationTest.class,
+                "production");
+
+        assertPropertiesEquals(expected, actual);
+
+    }
+
+    @Test
+    public void testLoadExplicitEnvironmentWithDefaults() {
+
+        final Properties loaded = load("production");
+        final String firstKey = (String) loaded.keys().nextElement();
+
+        final Properties defs = new Properties();
+        defs.setProperty(firstKey, "default value");
+        defs.setProperty("not.from.loaded", "another default value");
+
+        final Properties expected = new Properties(defs);
+        expected.putAll(loaded);
+
+        final Properties actual = Configuration.of(ConfigurationTest.class,
+                "production", defs);
 
         assertPropertiesEquals(expected, actual);
 
