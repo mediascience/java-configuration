@@ -37,17 +37,17 @@ final Properties props = ...
 final Collection<String> overrides = Arrays.asList("sys.prop", "sys.other.prop");
 
 // any matching system properties override
-final Properties overridden = Collections.override(props, overrides);
+final Properties overridden = Configuration.override(props, overrides);
 
 
 final Properties addl = ...
 // any matching properties from source override
-final Properties overridden2 = Collections.override(props, overrides, addl);
+final Properties overridden2 = Configuration.override(props, overrides, addl);
 
 
 final Map<String,String> spec = Collections.singletonMap("USER", "my.app.user");
 // env USER value is added to props as "my.app.user"
-final Properties overridden2 = Collections.overrideFromEnv(props, spec);
+final Properties overridden2 = Configuration.overrideFromEnv(props, spec);
 ```
 
 ### Detach
