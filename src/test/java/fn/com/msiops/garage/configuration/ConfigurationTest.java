@@ -60,9 +60,14 @@ public final class ConfigurationTest {
         }
     }
 
+    private Properties loadedDefaults;
+
     @Before
     public void setup() {
         System.clearProperty(Configuration.ENVIRONMENT_PROPERTY);
+
+        this.loadedDefaults = load("default");
+
     }
 
     @Test
@@ -92,7 +97,11 @@ public final class ConfigurationTest {
     @Test
     public void testDefaultEnvironment() {
 
-        final Properties expected = load("development");
+        final Properties development = load("development");
+
+        final Properties expected = new Properties();
+        expected.putAll(this.loadedDefaults);
+        expected.putAll(development);
 
         final Properties actual = Configuration.of(ConfigurationTest.class);
 
@@ -122,7 +131,11 @@ public final class ConfigurationTest {
     @Test
     public void testExplicitEnvironment() {
 
-        final Properties expected = load("production");
+        final Properties loaded = load("production");
+
+        final Properties expected = new Properties();
+        expected.putAll(this.loadedDefaults);
+        expected.putAll(loaded);
 
         System.setProperty(Configuration.ENVIRONMENT_PROPERTY, "production");
         final Properties actual = Configuration.of(ConfigurationTest.class);
@@ -150,7 +163,11 @@ public final class ConfigurationTest {
     @Test
     public void testLoadExplicitEnvironment() {
 
-        final Properties expected = load("production");
+        final Properties loaded = load("production");
+
+        final Properties expected = new Properties();
+        expected.putAll(this.loadedDefaults);
+        expected.putAll(loaded);
 
         final Properties actual = Configuration.of(ConfigurationTest.class,
                 "production");
@@ -170,6 +187,7 @@ public final class ConfigurationTest {
         defs.setProperty("not.from.loaded", "another default value");
 
         final Properties expected = new Properties(defs);
+        expected.putAll(this.loadedDefaults);
         expected.putAll(loaded);
 
         final Properties actual = Configuration.of(ConfigurationTest.class,
@@ -500,7 +518,7 @@ public final class ConfigurationTest {
         System.setProperty(Configuration.ENVIRONMENT_PROPERTY, "nonexistent");
         final Properties actual = Configuration.of(ConfigurationTest.class);
 
-        assertTrue(flatten(actual).isEmpty());
+        assertEquals(this.loadedDefaults, flatten(actual));
 
     }
 
@@ -510,11 +528,14 @@ public final class ConfigurationTest {
         final Properties defs = new Properties();
         defs.setProperty("not.from.loaded", "default value");
 
+        final Properties expected = new Properties(defs);
+        expected.putAll(this.loadedDefaults);
+
         System.setProperty(Configuration.ENVIRONMENT_PROPERTY, "nonexistent");
         final Properties actual = Configuration.of(ConfigurationTest.class,
                 defs);
 
-        assertPropertiesEquals(defs, actual);
+        assertPropertiesEquals(expected, actual);
 
     }
 
@@ -529,6 +550,7 @@ public final class ConfigurationTest {
         defs.setProperty("not.from.loaded", "anoter default value");
 
         final Properties expected = new Properties(defs);
+        expected.putAll(this.loadedDefaults);
         expected.putAll(loaded);
 
         System.setProperty(Configuration.ENVIRONMENT_PROPERTY, "production");

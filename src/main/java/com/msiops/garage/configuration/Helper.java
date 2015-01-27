@@ -31,14 +31,22 @@ final class Helper {
     public static Properties load(final Class<?> key, final String env,
             final Properties defaults) {
 
-        try (InputStream is = key.getResourceAsStream(env + ".properties")) {
+        try (final InputStream dis = key
+                .getResourceAsStream("default.properties");
+                final InputStream eis = key.getResourceAsStream(env
+                        + ".properties");) {
 
             final Properties rval = new Properties(defaults);
-            rval.load(is);
+            if (dis != null) {
+                rval.load(dis);
+            }
+            if (eis != null) {
+                rval.load(eis);
+            }
             return rval;
 
         } catch (final Exception e) {
-            return new Properties(defaults);
+            throw new RuntimeException("error loading default.properties");
         }
 
     }
